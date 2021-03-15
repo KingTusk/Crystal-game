@@ -15,6 +15,15 @@ public:
 	// Sets default values for this character's properties
 	AMina();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UCameraComponent)
+		float BaseTurnRate;
+
+	UPROPERTY(EditAnywhere);
+	class USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(EditAnywhere);
+	class UCameraComponent* CameraComp;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,9 +37,14 @@ public:
 
 private:
 
-
+	//Movng forward
 	void Forward(float Value);
+
+	//Moving right
 	void Right(float Value);
+
+	//Called via input to turn at a a given rate
+	void TurnAtRate(float Rate);
 
 	void CheckJump();
 
@@ -52,4 +66,12 @@ private:
 	UPROPERTY(EditAnywhere)
 		float DashStop;
 
+	UPROPERTY()
+		FTimerHandle UnusedHandle;
+
+	UFUNCTION()
+		void StopDashing();
+
+	UFUNCTION()
+		void ResetDash();
 };
