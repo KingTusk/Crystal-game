@@ -21,12 +21,13 @@ AMina::AMina()
 	//Put this code in APlayer::APlayer() function
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 500.f;//how far away form character
-	SpringArmComp->SetRelativeRotation(FRotator(-30.f, 10.f, 0.f));//Rotation relative to character
+	SpringArmComp->TargetArmLength = 1000.f;//how far away form character
+	SpringArmComp->SetRelativeRotation(FRotator(-60.f, 20.f, 0.f));//Rotation relative to character
 
 	SpringArmComp->bEnableCameraLag = true;
 	SpringArmComp->CameraLagSpeed = 10.f;//change this to get more or less camera lag
 	SpringArmComp->bDoCollisionTest = false;
+	SpringArmComp->bInheritYaw = false;
 
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
