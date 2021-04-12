@@ -22,7 +22,7 @@ AMina::AMina()
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->TargetArmLength = 1000.f;//how far away form character
-	SpringArmComp->SetRelativeRotation(FRotator(-60.f, 20.f, 0.f));//Rotation relative to character
+	SpringArmComp->SetRelativeRotation(FRotator(20.f, 200.f, 0.f));//Rotation relative to character
 
 	SpringArmComp->bEnableCameraLag = true;
 	SpringArmComp->CameraLagSpeed = 10.f;//change this to get more or less camera lag
@@ -36,7 +36,7 @@ AMina::AMina()
 	Jumping = false;
 
 	//Set turn rate 
-	BaseTurnRate = 20.f;
+	BaseTurnRate = 10.f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -44,7 +44,8 @@ AMina::AMina()
 
 	////Character rotation
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->RotationRate = FRotator(500.0f, 0.0f, 0.0f);
+	GetCharacterMovement()->RotationRate = FRotator(1000.0f, 0.0f, 0.0f);
+	
 
 
 	//Jump Height and Character control in the air
@@ -53,9 +54,9 @@ AMina::AMina()
 
 	//dashing values
 	CanDash = true;
-	DashDistance = 6000.f;
+	DashDistance = 4000.f;
 	DashCooldown = 1.f;
-	DashStop = 0.1f;
+	DashStop = 0.2f;
 
 }
 
@@ -113,7 +114,7 @@ void AMina::Dash()
 	if (CanDash)
 	{
 		GetCharacterMovement()->BrakingFrictionFactor = 0.f;
-		LaunchCharacter(FVector(CameraComp->GetForwardVector().X, CameraComp->GetForwardVector().Y, 0).GetSafeNormal() * DashDistance, true, true);
+		LaunchCharacter(FVector(RootComponent->GetForwardVector().X, RootComponent->GetForwardVector().Y, 0).GetSafeNormal() * DashDistance, true, true);
 		CanDash = false;
 		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AMina::StopDashing, DashStop, false);
 	}
