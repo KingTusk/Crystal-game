@@ -15,7 +15,7 @@ public:
 	// Sets default values for this character's properties
 	AMina();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UCameraComponent)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MinaTurning")
 		float BaseTurnRate;
 
 	UPROPERTY(EditAnywhere);
@@ -23,6 +23,10 @@ public:
 
 	UPROPERTY(EditAnywhere);
 	class UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* AttackBox;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -74,4 +78,7 @@ private:
 
 	UFUNCTION()
 		void ResetDash();
+
+	/*UFUNCTION()
+	void BeginOverlap();*/
 };
