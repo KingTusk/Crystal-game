@@ -36,7 +36,7 @@ AMina::AMina()
 	Jumping = false;
 
 	//Set turn rate 
-	BaseTurnRate = 20.f;
+	BaseTurnRate = 100.f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -87,7 +87,7 @@ void AMina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAxis("Forward", this, &AMina::Forward);
 	PlayerInputComponent->BindAxis("Right", this, &AMina::Right);
-	PlayerInputComponent->BindAxis("CameraTurn", this, &APawn::AddControllerYawInput);
+	/*PlayerInputComponent->BindAxis("CameraTurn", this, &APawn::AddControllerYawInput);*/
 	PlayerInputComponent->BindAxis("CharacterRot", this, &AMina::TurnAtRate);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMina::CheckJump);
