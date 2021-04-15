@@ -28,7 +28,7 @@ AMina::AMina()
 	SpringArmComp->bEnableCameraLag = true;
 	SpringArmComp->CameraLagSpeed = 10.f;//change this to get more or less camera lag
 	SpringArmComp->bDoCollisionTest = false;
-	SpringArmComp->bInheritYaw = false;
+	SpringArmComp->bInheritYaw = true;
 
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
