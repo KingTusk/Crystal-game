@@ -19,10 +19,11 @@ AMina::AMina()
 	
 
 	//Put this code in APlayer::APlayer() function
+		//Put this code in APlayer::APlayer() function
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 1200.f;//how far away form character
-	SpringArmComp->SetRelativeRotation(FRotator(-60.f, 20.f, 0.f));//Rotation relative to character
+	SpringArmComp->TargetArmLength = 1000.f;//how far away form character
+	SpringArmComp->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));//Rotation relative to character
 
 	SpringArmComp->bEnableCameraLag = true;
 	SpringArmComp->CameraLagSpeed = 10.f;//change this to get more or less camera lag
@@ -35,13 +36,17 @@ AMina::AMina()
 	Jumping = false;
 
 	//Set turn rate 
-	BaseTurnRate = 50.f;
+	BaseTurnRate = 100.f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	
+	////Character rotation
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->RotationRate = FRotator(200.0f, 0.0f, 0.0f);
+
+
 	//Jump Height and Character control in the air
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 20.0f;
@@ -50,7 +55,7 @@ AMina::AMina()
 	CanDash = true;
 	DashDistance = 4000.f;
 	DashCooldown = 1.f;
-	DashStop = 0.1f;
+	DashStop = 0.2f;
 
 }
 
@@ -82,8 +87,8 @@ void AMina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAxis("Forward", this, &AMina::Forward);
 	PlayerInputComponent->BindAxis("Right", this, &AMina::Right);
-	PlayerInputComponent->BindAxis("CameraRotate", this, &APawn::AddControllerYawInput);
-	/*PlayerInputComponent->BindAxis("CharacterRot", this, &AMina::TurnAtRate);*/
+	/*PlayerInputComponent->BindAxis("CameraTurn", this, &APawn::AddControllerYawInput);*/
+	PlayerInputComponent->BindAxis("CharacterRot", this, &AMina::TurnAtRate);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMina::CheckJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMina::CheckJump);
@@ -145,6 +150,12 @@ void AMina::Forward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
+	
+	
+	/*if (Value)
+	{
+		AddMovementInput(GetActorForwardVector(), Value);
+	}*/
 }
 
 void AMina::Right(float Value)
@@ -160,5 +171,10 @@ void AMina::Right(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
 	}
+
+	/*if (Value)
+	{
+		AddMovementInput(GetActorRightVector(), Value);
+	}*/
 }
 
