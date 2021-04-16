@@ -15,13 +15,13 @@ public:
 	// Sets default values for this character's properties
 	AMina();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MinaTurning")
+	UPROPERTY(EditAnywhere, Category = "MinaTurning")
 		float BaseTurnRate;
 
-	UPROPERTY(EditAnywhere);
+	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* SpringArmComp;
 
-	UPROPERTY(EditAnywhere);
+	UPROPERTY(EditAnywhere)
 	class UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -38,6 +38,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
+		float BaseTurnRate;*/
 
 private:
 
@@ -81,4 +84,9 @@ private:
 
 	/*UFUNCTION()
 	void BeginOverlap();*/
+
+public:
+	//FORCEINLINE class USpringArmComponent* GetSpringArmComp() const { return SpringArmComp; }
+
+	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }
 };

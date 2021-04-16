@@ -15,48 +15,77 @@ AMina::AMina()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	/*AutoPossessPlayer = EAutoReceiveInput::Player0;*/
 	
+	// set our turn rates for input
+	BaseTurnRate = 45.f;
 
-	//Put this code in APlayer::APlayer() function
-		//Put this code in APlayer::APlayer() function
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
-	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 1000.f;//how far away form character
-	SpringArmComp->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));//Rotation relative to character
-
-	SpringArmComp->bEnableCameraLag = true;
-	SpringArmComp->CameraLagSpeed = 10.f;//change this to get more or less camera lag
-	SpringArmComp->bDoCollisionTest = false;
-	SpringArmComp->bInheritYaw = true;
-
-
-	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-
-	Jumping = false;
-
-	//Set turn rate 
-	BaseTurnRate = 100.f;
-
+	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	////Character rotation
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->RotationRate = FRotator(200.0f, 0.0f, 0.0f);
-
-
-	//Jump Height and Character control in the air
+	// Configure character movement
+	GetCharacterMovement()->bOrientRotationToMovement = true; 	
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 20.0f;
+	
+	// Create a camera boom
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->SetupAttachment(RootComponent);
+	SpringArmComp->TargetArmLength = 1200.0f; // The camera follows at this distance behind the character	
+	SpringArmComp->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+
+	// Create a follow camera
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComp->SetupAttachment(SpringArmComp);
+	SpringArmComp->bEnableCameraLag = true;
+	SpringArmComp->CameraLagSpeed = 10.f;
+	SpringArmComp->bDoCollisionTest = false;
+	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+	//THIS CODE DOESNT WORK RIGHT
+	////Set turn rate 
+	//BaseTurnRate = 50.f;
+
+	//////Character movement
+	//GetCharacterMovement()->bOrientRotationToMovement = true;
+	//GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+ //   //Jump Height and Character control in the air
+	//GetCharacterMovement()->JumpZVelocity = 500.f;
+	//GetCharacterMovement()->AirControl = 20.0f;
+
+	//bUseControllerRotationPitch = false;
+	//bUseControllerRotationYaw = false;
+	//bUseControllerRotationRoll = false;
+
+	////Create the spring arm componennt and determine its length away from the player and its rotation
+	////SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	////SpringArmComp->SetupAttachment(RootComponent);
+	////SpringArmComp->TargetArmLength = 1200.f;//how far away form character
+	////SpringArmComp->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));//Rotation relative to character
+
+	////SpringArmComp->bEnableCameraLag = true;
+	////SpringArmComp->CameraLagSpeed = 10.f;//change this to get more or less camera lag
+	////SpringArmComp->bDoCollisionTest = false;
+	////SpringArmComp->bUsePawnControlRotation = true;
+
+	////Create the camera
+	//CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	//CameraComp->SetupAttachment(RootComponent);
+	//CameraComp->SetRelativeRotation(FRotator(0.f, -50.f, 330.f));
+	//CameraComp->bUsePawnControlRotation = false;
+///////////////////////////////////////////////////////////////////////////////////
 
 	//dashing values
 	CanDash = true;
 	DashDistance = 4000.f;
 	DashCooldown = 1.f;
 	DashStop = 0.2f;
-
+    Jumping = false;
 }
 
 
@@ -83,13 +112,20 @@ void AMina::Tick(float DeltaTime)
 // Called to bind functionality to input
 void AMina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	check(PlayerInputComponent);
 
+	//Player forward and right movement 
 	PlayerInputComponent->BindAxis("Forward", this, &AMina::Forward);
 	PlayerInputComponent->BindAxis("Right", this, &AMina::Right);
-	/*PlayerInputComponent->BindAxis("CameraTurn", this, &APawn::AddControllerYawInput);*/
+
+	PlayerInputComponent->BindAxis("CameraRotate", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("CharacterRot", this, &AMina::TurnAtRate);
 
+	////Rotation inputs
+	//PlayerInputComponent->BindAxis("CameraRotate", this, &APawn::AddControllerYawInput);
+	///*PlayerInputComponent->BindAxis("CharacterRot", this, &AMina::TurnAtRate);*/
+
+	//Actions inputs
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMina::CheckJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMina::CheckJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AMina::Dash);
@@ -150,12 +186,6 @@ void AMina::Forward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
-	
-	
-	/*if (Value)
-	{
-		AddMovementInput(GetActorForwardVector(), Value);
-	}*/
 }
 
 void AMina::Right(float Value)
@@ -172,9 +202,5 @@ void AMina::Right(float Value)
 		AddMovementInput(Direction, Value);
 	}
 
-	/*if (Value)
-	{
-		AddMovementInput(GetActorRightVector(), Value);
-	}*/
 }
 
