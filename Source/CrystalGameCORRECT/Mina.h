@@ -81,13 +81,13 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	float FireRange = 500.0f;
 
-	//void CheckShootCondition();
+	void CheckShootCondition();
 
-	//float ReturnDistanceToPlayer();
+	float ReturnDistanceToPlayer();
 
 	FTimerHandle FireRateTimerHandle;
 
-	/*AMina *MinaPlayer;*/
+	AMina *MinaPlayer;
 
 	UFUNCTION()
 		void Shoot();

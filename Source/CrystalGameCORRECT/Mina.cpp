@@ -62,9 +62,9 @@ void AMina::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AMina::CheckShootCondition, FireRate, true);
+	GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AMina::CheckShootCondition, FireRate, true);
 
-	//MinaPlayer = Cast<AMina>(UGameplayStatics::GetPlayerPawn(this, 0));
+	MinaPlayer = Cast<AMina>(UGameplayStatics::GetPlayerPawn(this, 0));
 	
 }
 
@@ -133,24 +133,24 @@ void AMina::Melee()
 
 }
 
-//void AMina::CheckShootCondition()
-//{
-//	if (!MinaPlayer)
-//	{
-//		return;
-//	}
-//
-//}
-//
-//float AMina::ReturnDistanceToPlayer()
-//{
-//	if (!MinaPlayer)
-//	{
-//		return 0.0f;
-//	}
-//
-//	
-//}
+void AMina::CheckShootCondition()
+{
+	if (!MinaPlayer)
+	{
+		return;
+	}
+
+}
+
+float AMina::ReturnDistanceToPlayer()
+{
+	if (!MinaPlayer)
+	{
+		return 0.0f;
+	}
+
+	return FVector::Dist(MinaPlayer->GetActorLocation(), GetActorLocation());
+}
 
 void AMina::Shoot()
 {
