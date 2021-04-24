@@ -19,18 +19,18 @@ void AShroobs::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FVector Steps(0.0, 100.0, 0.0);
+	/*FVector Steps(10.0, 0.0, 0.0);
 	AShroobs::AddActorLocalOffset(Steps, false, nullptr);
-	
+	*/
 	
 }
 
 // Called every frame
 void AShroobs::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
-	FVector Steps{ (float)sin(AShroobs::GetGameTimeSinceCreation()) * 500, 0.0, 0.0 };
-	AShroobs::AddActorLocalOffset(Steps * DeltaTime, true, nullptr);
+	//Super::Tick(DeltaTime);
+	//FVector Steps{ (float)sin(AShroobs::GetGameTimeSinceCreation()) * 10.0, 0.0, 0.0 };
+	//AShroobs::AddActorLocalOffset(Steps * DeltaTime, true, nullptr);
 
 
 	/*FVector CurrentLocation = GetActorLocation();

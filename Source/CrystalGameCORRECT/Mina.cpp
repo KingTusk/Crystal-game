@@ -7,6 +7,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "CrystalProjectile.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -14,49 +16,44 @@ AMina::AMina()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
 	
+	// set our turn rates for input
+	BaseTurnRate = 45.f;
 
-	//Put this code in APlayer::APlayer() function
-		//Put this code in APlayer::APlayer() function
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
-	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 1000.f;//how far away form character
-	SpringArmComp->SetRelativeRotation(FRotator(-60.f, 20.f, 0.f));//Rotation relative to character
-
-	SpringArmComp->bEnableCameraLag = true;
-	SpringArmComp->CameraLagSpeed = 10.f;//change this to get more or less camera lag
-	SpringArmComp->bDoCollisionTest = false;
-	SpringArmComp->bInheritYaw = true;
-
-
-	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-
-	Jumping = false;
-
-	//Set turn rate 
-	BaseTurnRate = 20.f;
-
+	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	////Character rotation
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->RotationRate = FRotator(200.0f, 0.0f, 0.0f);
-
-
-	//Jump Height and Character control in the air
-	GetCharacterMovement()->JumpZVelocity = 500.f;
+	// Configure character movement
+	GetCharacterMovement()->bOrientRotationToMovement = true; 	
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 20.0f;
+	
+	// Create a camera boom
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->SetupAttachment(RootComponent);
+	SpringArmComp->TargetArmLength = 1200.0f; // The camera follows at this distance behind the character	
+	SpringArmComp->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+
+	// Create a follow camera
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComp->SetupAttachment(SpringArmComp);
+	SpringArmComp->bEnableCameraLag = true;
+	SpringArmComp->CameraLagSpeed = 10.f;
+	SpringArmComp->bDoCollisionTest = false;
+	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("SpawnComp"));
+	ProjectileSpawnPoint->SetupAttachment(RootComponent);
 
 	//dashing values
 	CanDash = true;
 	DashDistance = 4000.f;
 	DashCooldown = 1.f;
-	DashStop = 0.2f;
-
+	DashStop = 0.2f; 
+    Jumping = false;
 }
 
 
@@ -64,6 +61,10 @@ AMina::AMina()
 void AMina::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AMina::CheckShootCondition, FireRate, true);
+
+	MinaPlayer = Cast<AMina>(UGameplayStatics::GetPlayerPawn(this, 0));
 	
 }
 
@@ -83,16 +84,22 @@ void AMina::Tick(float DeltaTime)
 // Called to bind functionality to input
 void AMina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	check(PlayerInputComponent);
 
+	//Player forward and right movement 
 	PlayerInputComponent->BindAxis("Forward", this, &AMina::Forward);
 	PlayerInputComponent->BindAxis("Right", this, &AMina::Right);
-	PlayerInputComponent->BindAxis("CameraTurn", this, &APawn::AddControllerYawInput);
+
+	PlayerInputComponent->BindAxis("CameraRotate", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("CharacterRot", this, &AMina::TurnAtRate);
 
+	//Actions inputs
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMina::CheckJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMina::CheckJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AMina::Dash);
+	PlayerInputComponent->BindAction("Melee", IE_Pressed, this, &AMina::Melee);
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &AMina::Shoot);
+	//PlayerInputComponent->BindAction("Shoot", IE_Released, this, &AMina::Shoot);
 
 }
 
@@ -119,6 +126,52 @@ void AMina::Dash()
 	}
 }
 
+void AMina::Melee()
+{
+	//Here we need the code that spawns the hit box for minas attack
+	//As well as how much damage is dealth on a blow
+
+}
+
+void AMina::CheckShootCondition()
+{
+	if (!MinaPlayer)
+	{
+		return;
+	}
+
+}
+
+float AMina::ReturnDistanceToPlayer()
+{
+	if (!MinaPlayer)
+	{
+		return 0.0f;
+	}
+
+	return FVector::Dist(MinaPlayer->GetActorLocation(), GetActorLocation());
+}
+
+void AMina::Shoot()
+{
+	//Spawning the projectile and determining if its hit the enemy and killed them
+	if (ProjectileClass)
+	{
+		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
+		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
+
+		ACrystalProjectile* TempProjectile = GetWorld()->SpawnActor<ACrystalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+		TempProjectile->SetOwner(this);
+	}
+
+}
+
+void AMina::HandleDestruction()
+{
+
+
+}
+
 void AMina::StopDashing()
 {
 	GetCharacterMovement()->StopMovementImmediately();
@@ -129,6 +182,12 @@ void AMina::StopDashing()
 void AMina::ResetDash()
 {
 	CanDash = true;
+
+}
+
+void AMina::BeginOverlap()
+{
+	//Called when mina hits a hit box or trigger box, used to determine respawn and stuff
 
 }
 
@@ -150,12 +209,6 @@ void AMina::Forward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
-	
-	
-	/*if (Value)
-	{
-		AddMovementInput(GetActorForwardVector(), Value);
-	}*/
 }
 
 void AMina::Right(float Value)
@@ -172,9 +225,5 @@ void AMina::Right(float Value)
 		AddMovementInput(Direction, Value);
 	}
 
-	/*if (Value)
-	{
-		AddMovementInput(GetActorRightVector(), Value);
-	}*/
 }
 
