@@ -10,7 +10,7 @@ void ACrescentGameMode::BeginPlay()
 
 void ACrescentGameMode::ActorDied(AActor* DeadActor)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Actor has been killed"))
 }
 
 void ACrescentGameMode::HandleGameStart()

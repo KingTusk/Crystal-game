@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Health.generated.h"
 
+class ACrescentGameMode;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class CRYSTALGAMECORRECT_API UHealth : public UActorComponent
@@ -21,10 +22,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-		float DefaultHealth;
+		float DefaultHealth = 100.0f;
 
 	UPROPERTY(BlueprintReadOnly)
-		float Health;
+		float Health = DefaultHealth;
+
+	ACrescentGameMode* GameModeRef;
 
 	UFUNCTION()
 		void TakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);

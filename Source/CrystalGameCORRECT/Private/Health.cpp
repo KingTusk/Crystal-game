@@ -2,8 +2,10 @@
 
 
 #include "Health.h"
-
+#include "CrescentGameMode.h"
 #include "Kismet/GameplayStatics.h"
+
+
 
 // Sets default values for this component's properties
 UHealth::UHealth()
@@ -12,8 +14,8 @@ UHealth::UHealth()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	DefaultHealth = 100;
-	Health = DefaultHealth;
+	
+
 }
 
 
@@ -22,21 +24,31 @@ void UHealth::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* Owner = GetOwner();
-	if (Owner)
-	{
-		Owner->OnTakeAnyDamage.AddDynamic(this, &UHealth::TakeDamage);
-	}
-
+	Health = DefaultHealth;
+	GameModeRef = Cast<ACrescentGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealth::TakeDamage);
 }
 
 void UHealth::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (Damage <= 0)
+	if (Damage == 0)
 	{
 		return;
 	}
 
 	Health = FMath::Clamp(Health - Damage, 0.0f, DefaultHealth);
+
+	if (Health <= 0)
+	{
+		if (GameModeRef)
+		{
+			GameModeRef->ActorDied(GetOwner());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Health component has no reference to GameMode"));
+		}
+
+	}
 
 }
