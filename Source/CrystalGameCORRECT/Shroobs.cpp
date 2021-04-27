@@ -2,6 +2,9 @@
 
 
 #include "Shroobs.h"
+#include "Components/BoxComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AShroobs::AShroobs()
@@ -9,8 +12,17 @@ AShroobs::AShroobs()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	OurVisibleComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OurVisibleComponent"));
-	OurVisibleComponent->SetupAttachment(RootComponent);
+	// Set up the collider for the shroob
+	ShroobCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ShroobCollider"));
+	ShroobCollider->InitBoxExtent(FVector(50.f));
+
+	// Set OurCollider to be the RootComponent
+	RootComponent = ShroobCollider;
+
+	// Set up our visible mesh
+	ShroobVisibleMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShroobVisibleMesh"));
+	ShroobVisibleMesh->SetupAttachment(RootComponent);
+	
 
 }
 
@@ -18,24 +30,18 @@ AShroobs::AShroobs()
 void AShroobs::BeginPlay()
 {
 	Super::BeginPlay();
-
-	/*FVector Steps(10.0, 0.0, 0.0);
-	AShroobs::AddActorLocalOffset(Steps, false, nullptr);
-	*/
-	
 }
 
 // Called every frame
 void AShroobs::Tick(float DeltaTime)
 {
-	//Super::Tick(DeltaTime);
-	//FVector Steps{ (float)sin(AShroobs::GetGameTimeSinceCreation()) * 10.0, 0.0, 0.0 };
-	//AShroobs::AddActorLocalOffset(Steps * DeltaTime, true, nullptr);
+	Super::Tick(DeltaTime);
+}
 
+void AShroobs::ImHit()
+{
 
-	/*FVector CurrentLocation = GetActorLocation();
-	CurrentLocation += GetActorForwardVector() * MoveSpeed * DeltaTime;
-	SetActorLocation(CurrentLocation);*/
-
+	//Destroys the Shroob
+	Destroy();
 }
 

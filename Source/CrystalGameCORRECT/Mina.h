@@ -26,28 +26,36 @@ public:
 
 	//Variables
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-		class UBoxComponent* AttackBox;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 		USceneComponent* ProjectileSpawnPoint;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ACrystalProjectile> ProjectileClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* AttackBox;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+		FVector AttackPlacement {70.f, 0.f, 35.f};
+
 
 	//Mina turning speed
     UPROPERTY(EditAnywhere, Category = "MinaTurning")
 		float BaseTurnRate;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	virtual void HandleDestruction();
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION()
+		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+
+	virtual void HandleDestruction();
 
 
 private:
@@ -69,26 +77,21 @@ private:
 	UFUNCTION()
 		void Dash();
 
+	//Mellee attacks and projectile attacks below
 	UFUNCTION()
 		void Melee();
+	UFUNCTION()
+		void StopMelee();
 
+	//We dont have a attack animation for the game yet, once that is implemented we can remove this boolean
+	bool isAttacking{ false };
+	FVector temp{ 1.f };
+
+	UPROPERTY()
+		float Damage;
+	//Crystall projectiles and ammo
 	UPROPERTY(EditAnywhere)
 	int CrystalAmmo = 5;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	float FireRate = 2.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	float FireRange = 500.0f;
-
-	void CheckShootCondition();
-
-	float ReturnDistanceToPlayer();
-
-	FTimerHandle FireRateTimerHandle;
-
-	AMina *MinaPlayer;
-
 	UFUNCTION()
 		void Shoot();
 

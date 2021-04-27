@@ -14,21 +14,24 @@ class CRYSTALGAMECORRECT_API AShroobs : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AShroobs();
+	
+	void ImHit();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere);
-	UStaticMeshComponent* OurVisibleComponent{ nullptr };
 
 	
-	/*
-	UPROPERTY(EditAnywhere, Category = "Speed")
-		float MoveSpeed{ 150.f };*/
+
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* ShroobCollider;
+
+	UPROPERTY(VisibleAnywhere)
+		USkeletalMeshComponent* ShroobVisibleMesh;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 };
