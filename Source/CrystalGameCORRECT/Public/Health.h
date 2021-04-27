@@ -20,9 +20,9 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+ 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-		float DefaultHealth = 100.0f;
+		float DefaultHealth = 100.f;
 
 	UPROPERTY(BlueprintReadOnly)
 		float Health = DefaultHealth;
