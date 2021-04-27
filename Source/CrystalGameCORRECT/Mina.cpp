@@ -2,13 +2,17 @@
 
 
 #include "Mina.h"
-#include <Components/InputComponent.h>
-#include <GameFramework/CharacterMovementComponent.h>
+#include "Components/InputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "CrystalProjectile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Shroobs.h"
+#include "Health.h"
 
 
 // Sets default values
@@ -45,9 +49,19 @@ AMina::AMina()
 	SpringArmComp->bDoCollisionTest = false;
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	//Projectile spawnComponent
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("SpawnComp"));
 	ProjectileSpawnPoint->SetupAttachment(RootComponent);
 
+	//Simple melee attack box - this should eventually be put on a socket on the skeleton of the player to follow the attack-animation
+	AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("PlayerAttack"));
+	AttackBox->InitBoxExtent(FVector(30.f, 30.f, 30.f));
+	AttackBox->SetupAttachment(RootComponent);
+	AttackBox->SetGenerateOverlapEvents(false);	
+	AttackBox->SetRelativeLocation(AttackPlacement);
+
+
+	
 	//dashing values
 	CanDash = true;
 	DashDistance = 4000.f;
@@ -62,10 +76,9 @@ void AMina::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AMina::CheckShootCondition, FireRate, true);
+	//Check if we hit anything when we attack
+	AttackBox->OnComponentBeginOverlap.AddDynamic(this, &AMina::OnOverlap);
 
-	MinaPlayer = Cast<AMina>(UGameplayStatics::GetPlayerPawn(this, 0));
-	
 }
 
 // Called every frame
@@ -73,12 +86,19 @@ void AMina::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Is player jumping?
 	if (Jumping)
 	{
 		Jump();
 	}
+	//Only temporary as we have no attack animation
+	if (isAttacking)
+	{
+		//Move the hitbox to trigger the overlap event
+		AttackBox->SetRelativeLocation(AttackPlacement + temp);
+		temp *= -1.f;
+	}
 
-	
 }
 
 // Called to bind functionality to input
@@ -98,10 +118,12 @@ void AMina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMina::CheckJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AMina::Dash);
 	PlayerInputComponent->BindAction("Melee", IE_Pressed, this, &AMina::Melee);
+	PlayerInputComponent->BindAction("Melee", IE_Released, this, &AMina::StopMelee);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &AMina::Shoot);
 	//PlayerInputComponent->BindAction("Shoot", IE_Released, this, &AMina::Shoot);
 
 }
+
 
 void AMina::CheckJump()
 {
@@ -128,41 +150,47 @@ void AMina::Dash()
 
 void AMina::Melee()
 {
-	//Here we need the code that spawns the hit box for minas attack
-	//As well as how much damage is dealth on a blow
-
+	UE_LOG(LogTemp, Warning, TEXT("Attack"));
+	AttackBox->SetGenerateOverlapEvents(true);
+	isAttacking = true;	//only needed until we get animation
 }
 
-void AMina::CheckShootCondition()
+void AMina::StopMelee()
 {
-	if (!MinaPlayer)
-	{
-		return;
-	}
-
+	UE_LOG(LogTemp, Warning, TEXT("Stop Attack"));
+	AttackBox->SetGenerateOverlapEvents(false);
+	isAttacking = false;	//only needed until we get animation
 }
 
-float AMina::ReturnDistanceToPlayer()
+void AMina::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!MinaPlayer)
-	{
-		return 0.0f;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
 
-	return FVector::Dist(MinaPlayer->GetActorLocation(), GetActorLocation());
+		if (OtherActor->IsA(AShroobs::StaticClass()))
+		{
+			Cast<AShroobs>(OtherActor)->ImHit();
+			CrystalAmmo++;
+		}
 }
+
 
 void AMina::Shoot()
 {
-	//Spawning the projectile and determining if its hit the enemy and killed them
-	if (ProjectileClass)
+	if (CrystalAmmo > 0)
 	{
-		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
-		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
+		//Spawning the projectile and determining if its hit the enemy and killed them
+		if (ProjectileClass)
+		{
+			FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
+			FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
 
-		ACrystalProjectile* TempProjectile = GetWorld()->SpawnActor<ACrystalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-		TempProjectile->SetOwner(this);
+			ACrystalProjectile* TempProjectile = GetWorld()->SpawnActor<ACrystalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+			TempProjectile->SetOwner(this);
+			
+			CrystalAmmo--;
+		}
 	}
+	
 
 }
 
@@ -187,7 +215,7 @@ void AMina::ResetDash()
 
 void AMina::BeginOverlap()
 {
-	//Called when mina hits a hit box or trigger box, used to determine respawn and stuff
+
 
 }
 
