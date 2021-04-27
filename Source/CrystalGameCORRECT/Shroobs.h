@@ -15,21 +15,20 @@ public:
 	// Sets default values for this actor's properties
 	AShroobs();
 
-	void ImHit();
-
-	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* ShroobCollider;
-
-	UPROPERTY(VisibleAnywhere)
-		USkeletalMeshComponent* ShroobVisibleMesh;
-
-
-	//// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere);
+	UStaticMeshComponent* OurVisibleComponent{ nullptr };
+
+	
+	/*
+	UPROPERTY(EditAnywhere, Category = "Speed")
+		float MoveSpeed{ 150.f };*/
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 };
