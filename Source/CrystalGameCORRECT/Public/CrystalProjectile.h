@@ -38,7 +38,13 @@ public:
 	ACrystalProjectile();
 
 	UPROPERTY(EditAnywhere)
-	     int CrystalAmmo;
+	     int CrystalAmmo = 5;
+
+	UFUNCTION()
+		void AddAmmo();
+	
+	UFUNCTION()
+		void RemoveAmmo();
 
 protected:
 	// Called when the game starts or when spawned

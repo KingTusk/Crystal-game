@@ -28,6 +28,16 @@ void ACrystalProjectile::BeginPlay()
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &ACrystalProjectile::OnHit);
 }
 
+void ACrystalProjectile::AddAmmo()
+{
+	CrystalAmmo++;
+}
+
+void ACrystalProjectile::RemoveAmmo()
+{
+	CrystalAmmo--;
+}
+
 
 void ACrystalProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
@@ -41,8 +51,9 @@ void ACrystalProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	if (OtherActor && OtherActor != this && OtherActor != MyOwner)
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, DamageType);
+		Destroy();
 	}
 
-	Destroy();
+	
 }
 

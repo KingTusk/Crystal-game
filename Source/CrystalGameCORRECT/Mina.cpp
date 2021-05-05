@@ -76,7 +76,6 @@ void AMina::BeginPlay()
 
 	AttackBox->OnComponentBeginOverlap.AddDynamic(this, &AMina::OnOverlap);
 	CrystalAmmo = 5;
-	
 }
 
 // Called every frame

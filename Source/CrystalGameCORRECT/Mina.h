@@ -92,7 +92,9 @@ private:
 		void Shoot();
 
 	UPROPERTY(EditAnywhere)
-	int CrystalAmmo = 5;
+		int CrystalAmmo;
+
+	AMina* MinaAmmo;
 
 	UPROPERTY(EditAnywhere)
 		float DashDistance;
