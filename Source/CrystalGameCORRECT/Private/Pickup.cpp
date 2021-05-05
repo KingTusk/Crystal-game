@@ -22,12 +22,12 @@ APickup::APickup()
 
 	//Mesh Component
 	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshPickup"));
-	PickupMesh->AttachToComponent(PickupRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	PickupMesh->SetupAttachment(PickupRoot);
 
 	PickupBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxPickup"));
 	PickupBox->SetWorldScale3D(FVector(1.0f, 1.0f, 1.0f));
 	PickupBox->SetGenerateOverlapEvents(true);
-	PickupBox->AttachToComponent(PickupRoot, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	PickupBox->SetupAttachment(PickupRoot);
 
 }
 
