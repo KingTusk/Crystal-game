@@ -13,7 +13,6 @@ ACrystalProjectile::ACrystalProjectile()
 	PrimaryActorTick.bCanEverTick = false;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
-	ProjectileMesh->OnComponentHit.AddDynamic(this, &ACrystalProjectile::OnHit);
 	RootComponent = ProjectileMesh;
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
@@ -26,7 +25,7 @@ ACrystalProjectile::ACrystalProjectile()
 void ACrystalProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	ProjectileMesh->OnComponentHit.AddDynamic(this, &ACrystalProjectile::OnHit);
 }
 
 
