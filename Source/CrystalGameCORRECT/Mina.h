@@ -8,7 +8,6 @@
 
 class ACrystalProjectile;
 
-
 UCLASS()
 class CRYSTALGAMECORRECT_API AMina : public ACharacter
 {
@@ -89,11 +88,11 @@ private:
 
 	UPROPERTY()
 		float Damage;
-	//Crystall projectiles and ammo
-	UPROPERTY(EditAnywhere)
-	int CrystalAmmo = 5;
 	UFUNCTION()
 		void Shoot();
+
+	UPROPERTY(EditAnywhere)
+	int CrystalAmmo = 5;
 
 	UPROPERTY(EditAnywhere)
 		float DashDistance;

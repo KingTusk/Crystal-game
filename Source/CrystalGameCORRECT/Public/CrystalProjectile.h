@@ -37,6 +37,9 @@ public:
 	// Sets default values for this actor's properties
 	ACrystalProjectile();
 
+	UPROPERTY(EditAnywhere)
+	     int CrystalAmmo;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

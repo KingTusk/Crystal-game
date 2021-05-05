@@ -13,6 +13,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Shroobs.h"
 #include "Health.h"
+#include "Pickup.h"
 
 
 // Sets default values
@@ -59,7 +60,6 @@ AMina::AMina()
 	AttackBox->SetGenerateOverlapEvents(false);
 	AttackBox->SetRelativeLocation(AttackPlacement);
 
-
 	//dashing values
 	CanDash = true;
 	DashDistance = 4000.f;
@@ -75,6 +75,7 @@ void AMina::BeginPlay()
 	Super::BeginPlay();
 
 	AttackBox->OnComponentBeginOverlap.AddDynamic(this, &AMina::OnOverlap);
+	CrystalAmmo = 5;
 	
 }
 
