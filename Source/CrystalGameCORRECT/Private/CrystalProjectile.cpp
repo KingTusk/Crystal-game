@@ -25,16 +25,23 @@ ACrystalProjectile::ACrystalProjectile()
 void ACrystalProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &ACrystalProjectile::OnHit);
+}
+
+void ACrystalProjectile::AddAmmo()
+{
+	CrystalAmmo++;
+}
+
+void ACrystalProjectile::RemoveAmmo()
+{
+	CrystalAmmo--;
 }
 
 
 void ACrystalProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	AActor* MyOwner = GetOwner();
-
-	UE_LOG(LogTemp, Warning, TEXT("You hit something"))
 
 	if (!MyOwner)
 	{
@@ -44,10 +51,9 @@ void ACrystalProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	if (OtherActor && OtherActor != this && OtherActor != MyOwner)
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, DamageType);
-		UE_LOG(LogTemp, Warning, TEXT("Bullet shot, damage dealt"))
+		Destroy();
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Object hit, bullet destroyed"))
-	Destroy();
+	
 }
 

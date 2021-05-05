@@ -8,7 +8,6 @@
 
 class ACrystalProjectile;
 
-
 UCLASS()
 class CRYSTALGAMECORRECT_API AMina : public ACharacter
 {
@@ -35,6 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 		FVector AttackPlacement {70.f, 0.f, 35.f};
 
+
 	//Mina turning speed
     UPROPERTY(EditAnywhere, Category = "MinaTurning")
 		float BaseTurnRate;
@@ -53,24 +53,28 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-		void BeginOverlap();
 
 	virtual void HandleDestruction();
 
+
 private:
 
-	//TURNING AND MOVEMENT INPUTS FUNCTIONS
 	//Movng forward
 	void Forward(float Value);
+
 	//Moving right
 	void Right(float Value);
+
 	//Called via input to turn at a a given rate
 	void TurnAtRate(float Rate);
 
 	void CheckJump();
+
 	UPROPERTY()
 		bool Jumping;
+
+	UFUNCTION()
+		void Dash();
 
 	//Mellee attacks and projectile attacks below
 	UFUNCTION()
@@ -84,31 +88,37 @@ private:
 
 	UPROPERTY()
 		float Damage;
-	//Crystall projectiles and ammo
-	UPROPERTY(EditAnywhere)
-	int CrystalAmmo = 5;
-	
 	UFUNCTION()
 		void Shoot();
 
-	//Dash Properties and functions
-	UFUNCTION()
-		void Dash();
+	UPROPERTY(EditAnywhere)
+		int CrystalAmmo;
+
+	AMina* MinaAmmo;
+
 	UPROPERTY(EditAnywhere)
 		float DashDistance;
+
 	UPROPERTY(EditAnywhere)
 		float DashCooldown;
+
 	UPROPERTY()
 		bool CanDash;
+
 	UPROPERTY(EditAnywhere)
 		float DashStop;
+
 	UPROPERTY()
 		FTimerHandle UnusedHandle;
+
 	UFUNCTION()
 		void StopDashing();
+
 	UFUNCTION()
 		void ResetDash();
 
+	UFUNCTION()
+	void BeginOverlap();
 
 public:
 	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }

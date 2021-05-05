@@ -15,13 +15,14 @@ AShroobs::AShroobs()
 	// Set up the collider for the shroob
 	ShroobCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ShroobCollider"));
 	ShroobCollider->InitBoxExtent(FVector(50.f));
-	
+
 	// Set OurCollider to be the RootComponent
 	RootComponent = ShroobCollider;
 
 	// Set up our visible mesh
 	ShroobVisibleMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ShroobVisibleMesh"));
 	ShroobVisibleMesh->SetupAttachment(RootComponent);
+	
 
 }
 
@@ -29,23 +30,18 @@ AShroobs::AShroobs()
 void AShroobs::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
 
-//Called every frame
+// Called every frame
 void AShroobs::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AShroobs::ImHit()
 {
-    
+
 	//Destroys the Shroob
 	Destroy();
 }
-
-
 

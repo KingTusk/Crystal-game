@@ -2,8 +2,8 @@
 
 
 #include "Mina.h"
-#include "Components/InputComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include <Components/InputComponent.h>
+#include <GameFramework/CharacterMovementComponent.h>
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Runtime/Engine/Public/TimerManager.h"
@@ -13,6 +13,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Shroobs.h"
 #include "Health.h"
+#include "Pickup.h"
 
 
 // Sets default values
@@ -49,7 +50,6 @@ AMina::AMina()
 	SpringArmComp->bDoCollisionTest = false;
 	CameraComp->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	//Projectile spawnComponent
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("SpawnComp"));
 	ProjectileSpawnPoint->SetupAttachment(RootComponent);
 
@@ -57,11 +57,9 @@ AMina::AMina()
 	AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("PlayerAttack"));
 	AttackBox->InitBoxExtent(FVector(30.f, 30.f, 30.f));
 	AttackBox->SetupAttachment(RootComponent);
-	AttackBox->SetGenerateOverlapEvents(false);	
+	AttackBox->SetGenerateOverlapEvents(false);
 	AttackBox->SetRelativeLocation(AttackPlacement);
 
-
-	
 	//dashing values
 	CanDash = true;
 	DashDistance = 4000.f;
@@ -76,9 +74,8 @@ void AMina::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Check if we hit anything when we attack
 	AttackBox->OnComponentBeginOverlap.AddDynamic(this, &AMina::OnOverlap);
-
+	CrystalAmmo = 5;
 }
 
 // Called every frame
@@ -86,7 +83,6 @@ void AMina::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Is player jumping?
 	if (Jumping)
 	{
 		Jump();
@@ -98,7 +94,7 @@ void AMina::Tick(float DeltaTime)
 		AttackBox->SetRelativeLocation(AttackPlacement + temp);
 		temp *= -1.f;
 	}
-
+	
 }
 
 // Called to bind functionality to input
@@ -118,12 +114,11 @@ void AMina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMina::CheckJump);
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &AMina::Dash);
 	PlayerInputComponent->BindAction("Melee", IE_Pressed, this, &AMina::Melee);
-	PlayerInputComponent->BindAction("Melee", IE_Released, this, &AMina::StopMelee);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &AMina::Shoot);
+	PlayerInputComponent->BindAction("Melee", IE_Released, this, &AMina::StopMelee);
 	//PlayerInputComponent->BindAction("Shoot", IE_Released, this, &AMina::Shoot);
 
 }
-
 
 void AMina::CheckJump()
 {
@@ -153,6 +148,7 @@ void AMina::Melee()
 	UE_LOG(LogTemp, Warning, TEXT("Attack"));
 	AttackBox->SetGenerateOverlapEvents(true);
 	isAttacking = true;	//only needed until we get animation
+
 }
 
 void AMina::StopMelee()
@@ -162,15 +158,15 @@ void AMina::StopMelee()
 	isAttacking = false;	//only needed until we get animation
 }
 
-void AMina::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AMina::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
-
-		if (OtherActor->IsA(AShroobs::StaticClass()))
-		{
-			Cast<AShroobs>(OtherActor)->ImHit();
-			CrystalAmmo++;
-		}
+	if (OtherActor->IsA(AShroobs::StaticClass()))
+	{
+		Cast<AShroobs>(OtherActor)->ImHit();
+		CrystalAmmo++;
+	}
 }
 
 
@@ -186,11 +182,9 @@ void AMina::Shoot()
 
 			ACrystalProjectile* TempProjectile = GetWorld()->SpawnActor<ACrystalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 			TempProjectile->SetOwner(this);
-			
 			CrystalAmmo--;
 		}
 	}
-	
 
 }
 
@@ -215,9 +209,8 @@ void AMina::ResetDash()
 
 void AMina::BeginOverlap()
 {
-
-
 }
+
 
 void AMina::TurnAtRate(float Rate)
 {

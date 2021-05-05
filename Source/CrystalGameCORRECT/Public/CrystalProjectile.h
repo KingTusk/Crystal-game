@@ -17,17 +17,17 @@ private:
 
 	//Adding the meshes and projectile movement to the Projectile
 	//We add the actual mesh to the projectile inside the engine
-	UPROPERTY(EditAnywhere, Category = "Projectile", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Projectile")
 		UProjectileMovementComponent* ProjectileMovement;
-	UPROPERTY(EditAnywhere, Category = "Projectile", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Projectile")
 		UStaticMeshComponent* ProjectileMesh;
 	UPROPERTY(EditAnywhere, Category = "Damage")
 		TSubclassOf<UDamageType> DamageType;
 	//Movement speed and damage
 	//Both editable in the engine
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Projectile")
 		float MovementSpeed = 1500;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = "Damage")
 		float Damage = 50;
 
 	UFUNCTION()
@@ -36,6 +36,15 @@ private:
 public:	
 	// Sets default values for this actor's properties
 	ACrystalProjectile();
+
+	UPROPERTY(EditAnywhere)
+	     int CrystalAmmo = 5;
+
+	UFUNCTION()
+		void AddAmmo();
+	
+	UFUNCTION()
+		void RemoveAmmo();
 
 protected:
 	// Called when the game starts or when spawned
