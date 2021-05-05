@@ -29,7 +29,8 @@ AShroobs::AShroobs()
 void AShroobs::BeginPlay()
 {
 	Super::BeginPlay();
-
+    spawnPoint = GetActorLocation();
+	
 	
 }
 
