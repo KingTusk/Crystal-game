@@ -6,49 +6,47 @@
 #include "GameFramework/Actor.h"
 #include "CrystalProjectile.generated.h"
 
-class UProjectileMovementComponent;
 
 UCLASS()
 class CRYSTALGAMECORRECT_API ACrystalProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-private:
-
-	//Adding the meshes and projectile movement to the Projectile
-	//We add the actual mesh to the projectile inside the engine
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-		UProjectileMovementComponent* ProjectileMovement;
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-		UStaticMeshComponent* ProjectileMesh;
-	UPROPERTY(EditAnywhere, Category = "Damage")
-		TSubclassOf<UDamageType> DamageType;
-	//Movement speed and damage
-	//Both editable in the engine
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-		float MovementSpeed = 1500;
-	UPROPERTY(EditAnywhere, Category = "Damage")
-		float Damage = 50;
-
-	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 public:	
 	// Sets default values for this actor's properties
 	ACrystalProjectile();
 
-	UPROPERTY(EditAnywhere)
-	     int CrystalAmmo = 5;
-
-	UFUNCTION()
-		void AddAmmo();
-	
-	UFUNCTION()
-		void RemoveAmmo();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//speed of the bullet
+	UPROPERTY(EditAnywhere, Category = "Setup")
+		float Speed{ 2000.f };
+
+	//We destroy the bullets after 5 seconds
+	UPROPERTY(EditAnywhere, Category = "Setup")
+		float TimeBeforeDestroy{ 3.f };
+
+	float TimeLived{ 0 };
+
+
+	//the Bullets collider which can be edited in the Editor
+	UPROPERTY(EditAnywhere, Category = "Setup");
+	class USphereComponent* OurCollider{ nullptr };
+
+	//the Visual mesh of the actor
+	UPROPERTY(EditAnywhere, Category = "Setup");
+	class UStaticMeshComponent* OurVisibleComponent{ nullptr };
+
+
+	UFUNCTION()
+		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+			UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
+			bool bFromSweep, const FHitResult& SweepResult);
+
+public:
+	
+	virtual void Tick(float DeltaTime) override;
 
 };

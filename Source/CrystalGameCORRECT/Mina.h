@@ -24,10 +24,11 @@ public:
 	class UCameraComponent* CameraComp;
 
 	//Variables
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-		USceneComponent* ProjectileSpawnPoint;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	TSubclassOf<ACrystalProjectile> ProjectileClass;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Projectile");
+	USceneComponent* ProjectileSpawnPoint;
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent* AttackBox;
@@ -48,33 +49,32 @@ public:
 	UFUNCTION()
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+		void Refill();
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-	virtual void HandleDestruction();
-
-
 private:
 
 	//Movng forward
+	UFUNCTION()
 	void Forward(float Value);
-
 	//Moving right
+	UFUNCTION()
 	void Right(float Value);
 
 	//Called via input to turn at a a given rate
+	UFUNCTION()
 	void TurnAtRate(float Rate);
 
+	//Jumpong Functions
+	UFUNCTION()
 	void CheckJump();
-
 	UPROPERTY()
 		bool Jumping;
-
-	UFUNCTION()
-		void Dash();
 
 	//Mellee attacks and projectile attacks below
 	UFUNCTION()
@@ -90,35 +90,27 @@ private:
 		float Damage;
 	UFUNCTION()
 		void Shoot();
-
 	UPROPERTY(EditAnywhere)
 		int CrystalAmmo;
 
-	AMina* MinaAmmo;
-
+	//Dash Functions and porperty
+	//Length of desh, speed of dash, dash stop timer etc.
+	UFUNCTION()
+		void Dash();
 	UPROPERTY(EditAnywhere)
 		float DashDistance;
-
 	UPROPERTY(EditAnywhere)
 		float DashCooldown;
-
 	UPROPERTY()
 		bool CanDash;
-
 	UPROPERTY(EditAnywhere)
 		float DashStop;
-
 	UPROPERTY()
 		FTimerHandle UnusedHandle;
-
 	UFUNCTION()
 		void StopDashing();
-
 	UFUNCTION()
 		void ResetDash();
-
-	UFUNCTION()
-	void BeginOverlap();
 
 public:
 	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }

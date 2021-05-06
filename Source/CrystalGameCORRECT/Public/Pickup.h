@@ -42,14 +42,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PickupType")
 		bool Health;
 
+	UPROPERTY(EditAnywhere)
+		float HealthToAdd = 0;
+
 	//Function we call when pickup is overlapped by actor
 	UFUNCTION()
 		void OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-		void AmmoRefill();
-
-	UFUNCTION()
-		void HealthRefill();
 
 };

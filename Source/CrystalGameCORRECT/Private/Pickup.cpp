@@ -5,6 +5,7 @@
 #include "Health.h"
 #include "Components/BoxComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "CrystalGameCORRECT/Mina.h"
 
 // Sets default values
 APickup::APickup()
@@ -37,7 +38,8 @@ void APickup::BeginPlay()
 	Super::BeginPlay();
 	
 	PickupBox->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPlayerEnterPickupBox);
-	/*CrystalProjectile = Cast<ACrystalProjectile::CrystalAmmo>*/
+	AMina* player = Cast<AMina>(UGameplayStatics::GetPlayerCharacter(this, 0));
+
 }
 
 // Called every frame
@@ -51,28 +53,20 @@ void APickup::OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor
 {
 
 	UE_LOG(LogTemp, Warning, TEXT("Object Picked up"))
-	if (Ammo == true)
+	if (Ammo == true && OtherActor->IsA(AMina::StaticClass()))
 	{
-		AmmoRefill();
+		UE_LOG(LogTemp, Warning, TEXT("Ammo refilled"))
+		Cast<AMina>(OtherActor)->Refill();
 		Destroy();
 	}
 	
 	if (Health == true)
 	{
-		HealthRefill();
+		UE_LOG(LogTemp, Warning, TEXT("Health Picked up"))
 		Destroy();
 	}
 	
 }
 
-void APickup::AmmoRefill()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Ammo refilled"))
-		
-}
 
-void APickup::HealthRefill()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Health Refilled"))
-}
 

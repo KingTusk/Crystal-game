@@ -4,56 +4,74 @@
 #include "CrystalProjectile.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.H"
+#include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "CrystalGameCORRECT/Shroobs.h"
+#include "CrystalGameCORRECT/Mina.h"
 
 // Sets default values
 ACrystalProjectile::ACrystalProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
-	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
-	RootComponent = ProjectileMesh;
+	OurCollider = CreateDefaultSubobject<USphereComponent>(TEXT("MyCollider"));
+	RootComponent = OurCollider;
 
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
-	ProjectileMovement->InitialSpeed = MovementSpeed;
-	ProjectileMovement->MaxSpeed = MovementSpeed;
-	InitialLifeSpan = 3.0f;
+	//Getting the visual mesh attached
+	OurVisibleComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OurVisibleComponent"));
+	OurVisibleComponent->SetupAttachment(RootComponent);
+
+	
 }
 
 // Called when the game starts or when spawned
 void ACrystalProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	ProjectileMesh->OnComponentHit.AddDynamic(this, &ACrystalProjectile::OnHit);
-}
 
-void ACrystalProjectile::AddAmmo()
-{
-	CrystalAmmo++;
-}
+	Cast<USphereComponent>(RootComponent)->OnComponentBeginOverlap.AddDynamic(this, &ACrystalProjectile::OnOverlap);
 
-void ACrystalProjectile::RemoveAmmo()
-{
-	CrystalAmmo--;
 }
 
 
-void ACrystalProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ACrystalProjectile::Tick(float DeltaTime)
 {
-	AActor* MyOwner = GetOwner();
+	Super::Tick(DeltaTime);
 
-	if (!MyOwner)
+	TimeLived += DeltaTime;
+	if (TimeLived > TimeBeforeDestroy)
 	{
+		this->Destroy();
+		UE_LOG(LogTemp, Warning, TEXT("Destroyed"))
+	}
+
+	FVector NewLocation = GetActorLocation();
+	NewLocation += GetActorForwardVector() * Speed * DeltaTime;
+	SetActorLocation(NewLocation);
+}
+
+
+void ACrystalProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+	if (OtherActor->IsA(AMina::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Crystal overlap %s"), *OtherActor->GetName())
 		return;
 	}
 
-	if (OtherActor && OtherActor != this && OtherActor != MyOwner)
+	if (OtherActor)
 	{
-		UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, DamageType);
+		UE_LOG(LogTemp, Warning, TEXT("Crystal overlap %s"), *OtherActor->GetName())
 		Destroy();
 	}
 
-	
+	if (OtherActor->IsA(AShroobs::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Crystal overlap %s"), *OtherActor->GetName())
+		Cast<AShroobs>(OtherActor)->ImHit();
+		//Destroy crystal
+		Destroy();
+	}
 }
-

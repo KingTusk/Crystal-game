@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Health.h"
 
 // Sets default values
 AShroobs::AShroobs()
@@ -40,8 +41,11 @@ void AShroobs::Tick(float DeltaTime)
 
 void AShroobs::ImHit()
 {
-
-	//Destroys the Shroob
-	Destroy();
+	/*if (Health <= 0)
+	{*/
+		//Destroys the Shroob
+		Destroy();
+	/*}*/
+	
 }
 

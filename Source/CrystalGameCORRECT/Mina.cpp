@@ -158,23 +158,30 @@ void AMina::StopMelee()
 	isAttacking = false;	//only needed until we get animation
 }
 
+
+//This function determines if we overlap the shroob class with our attack hit box
 void AMina::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
 	if (OtherActor->IsA(AShroobs::StaticClass()))
 	{
+		//We cast to the ImHit function in the shroob class
 		Cast<AShroobs>(OtherActor)->ImHit();
 		CrystalAmmo++;
 	}
 }
 
+//This function is called whenever the player picks up a ammo refill
+void AMina::Refill()
+{
+	CrystalAmmo++;
+}
 
 void AMina::Shoot()
 {
 	if (CrystalAmmo > 0)
 	{
-		//Spawning the projectile and determining if its hit the enemy and killed them
 		if (ProjectileClass)
 		{
 			FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
@@ -182,15 +189,10 @@ void AMina::Shoot()
 
 			ACrystalProjectile* TempProjectile = GetWorld()->SpawnActor<ACrystalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 			TempProjectile->SetOwner(this);
+
 			CrystalAmmo--;
 		}
 	}
-
-}
-
-void AMina::HandleDestruction()
-{
-
 
 }
 
@@ -206,11 +208,6 @@ void AMina::ResetDash()
 	CanDash = true;
 
 }
-
-void AMina::BeginOverlap()
-{
-}
-
 
 void AMina::TurnAtRate(float Rate)
 {

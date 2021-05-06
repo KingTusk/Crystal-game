@@ -4,6 +4,7 @@
 #include "Health.h"
 #include "CrescentGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Pickup.h"
 
 
 
