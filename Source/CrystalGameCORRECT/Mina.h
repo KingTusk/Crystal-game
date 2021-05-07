@@ -57,22 +57,25 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-private:
+
+public:
+	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }
+
 
 	//Movng forward
 	UFUNCTION()
-	void Forward(float Value);
+		void Forward(float Value);
 	//Moving right
 	UFUNCTION()
-	void Right(float Value);
+		void Right(float Value);
 
 	//Called via input to turn at a a given rate
 	UFUNCTION()
-	void TurnAtRate(float Rate);
+		void TurnAtRate(float Rate);
 
 	//Jumpong Functions
 	UFUNCTION()
-	void CheckJump();
+		void CheckJump();
 	UPROPERTY()
 		bool Jumping;
 
@@ -90,8 +93,8 @@ private:
 		float Damage;
 	UFUNCTION()
 		void Shoot();
-	UPROPERTY(EditAnywhere)
-		int CrystalAmmo;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile")
+		int32 CrystalAmmo { 0 };
 
 	//Dash Functions and porperty
 	//Length of desh, speed of dash, dash stop timer etc.
@@ -111,7 +114,4 @@ private:
 		void StopDashing();
 	UFUNCTION()
 		void ResetDash();
-
-public:
-	FORCEINLINE class UCameraComponent* GetCameraComp() const { return CameraComp; }
 };

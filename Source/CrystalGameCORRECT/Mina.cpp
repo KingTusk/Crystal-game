@@ -162,10 +162,10 @@ void AMina::StopMelee()
 //This function determines if we overlap the shroob class with our attack hit box
 void AMina::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
 	if (OtherActor->IsA(AShroobs::StaticClass()))
 	{
+
 		//We cast to the ImHit function in the shroob class
 		Cast<AShroobs>(OtherActor)->ImHit();
 		CrystalAmmo++;
