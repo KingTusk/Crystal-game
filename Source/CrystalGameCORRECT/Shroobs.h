@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// The game and source code belongs to Team 7 Programming team
 
 #pragma once
 
@@ -18,9 +18,6 @@ public:
 	void ImHit();
 
 protected:
-
-	
-
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* ShroobCollider;
 

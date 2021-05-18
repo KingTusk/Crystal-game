@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// The game and source code belongs to Team 7 Programming team
 
 #include "Mina.h"
 #include <Components/InputComponent.h>
@@ -14,6 +13,7 @@
 #include "Shroobs.h"
 #include "Health.h"
 #include "Pickup.h"
+#include "CrystalCluster.h"
 
 
 // Sets default values
@@ -78,6 +78,7 @@ void AMina::BeginPlay()
 	CrystalAmmo = 5;
 }
 
+
 // Called every frame
 void AMina::Tick(float DeltaTime)
 {
@@ -132,10 +133,22 @@ void AMina::CheckJump()
 	}
 }
 
+
 void AMina::Dash()
 {
 	if (CanDash)
 	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			DashParticle,
+			GetActorLocation(),
+		    GetActorRotation(),
+			GetActorScale(),
+			true,
+			true,
+			ENCPoolMethod::AutoRelease,
+			true
+		);
 		GetCharacterMovement()->BrakingFrictionFactor = 0.f;
 		LaunchCharacter(FVector(RootComponent->GetForwardVector().X, RootComponent->GetForwardVector().Y, 0).GetSafeNormal() * DashDistance, true, true);
 		CanDash = false;
@@ -165,10 +178,13 @@ void AMina::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherA
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Overlaps %s"), *OtherActor->GetName())
 	if (OtherActor->IsA(AShroobs::StaticClass()))
 	{
-
 		//We cast to the ImHit function in the shroob class
 		Cast<AShroobs>(OtherActor)->ImHit();
 		CrystalAmmo++;
+	}
+	if (OtherActor->IsA(ACrystalCluster::StaticClass()))
+	{
+		Cast<ACrystalCluster>(OtherActor)->IsStruck();
 	}
 }
 
@@ -188,7 +204,6 @@ void AMina::Shoot()
 			FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
 
 			ACrystalProjectile* TempProjectile = GetWorld()->SpawnActor<ACrystalProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-			TempProjectile->SetOwner(this);
 
 			CrystalAmmo--;
 		}

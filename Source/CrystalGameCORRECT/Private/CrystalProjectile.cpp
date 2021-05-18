@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// The game and source code belongs to Team 7 Programming team
 
 
 #include "CrystalProjectile.h"
@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "CrystalGameCORRECT/Shroobs.h"
 #include "CrystalGameCORRECT/Mina.h"
+#include "CrystalCluster.h"
 
 // Sets default values
 ACrystalProjectile::ACrystalProjectile()
@@ -60,18 +61,22 @@ void ACrystalProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		UE_LOG(LogTemp, Warning, TEXT("Crystal overlap %s"), *OtherActor->GetName())
 		return;
 	}
-
 	if (OtherActor)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Crystal overlap %s"), *OtherActor->GetName())
 		Destroy();
 	}
-
 	if (OtherActor->IsA(AShroobs::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Crystal overlap %s"), *OtherActor->GetName())
 		Cast<AShroobs>(OtherActor)->ImHit();
 		//Destroy crystal
+		Destroy();
+	}
+	if (OtherActor->IsA(ACrystalCluster::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Crystal Overlap %s"), *OtherActor->GetName())
+		Cast<ACrystalCluster>(OtherActor)->IsStruck();
 		Destroy();
 	}
 }

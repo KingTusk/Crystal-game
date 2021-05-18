@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// The game and source code belongs to Team 7 Programming team
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Mina.generated.h"
 
 class ACrystalProjectile;
@@ -28,13 +29,15 @@ public:
 	TSubclassOf<ACrystalProjectile> ProjectileClass;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Projectile");
 	USceneComponent* ProjectileSpawnPoint;
-	
+
+	//Dash Particles
+	UPROPERTY(EditAnywhere, Category = "Particle Effects")
+		UNiagaraSystem* DashParticle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent* AttackBox;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
 		FVector AttackPlacement {70.f, 0.f, 35.f};
-
 
 	//Mina turning speed
     UPROPERTY(EditAnywhere, Category = "MinaTurning")
