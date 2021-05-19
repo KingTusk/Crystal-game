@@ -19,9 +19,10 @@ public:
 	AMina();
 
 	//Components for Mina
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "SpringArm")
 	class USpringArmComponent* SpringArmComp;
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY(EditAnywhere, Category = "CameraComp")
 	class UCameraComponent* CameraComp;
 
 	//Variables

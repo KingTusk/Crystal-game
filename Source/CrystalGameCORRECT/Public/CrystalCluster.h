@@ -25,10 +25,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Cluster")
 		class UBoxComponent* CrystalCollider;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Cluster")
 		USkeletalMeshComponent* CrystalVisibleMesh;
 
 	UFUNCTION()
