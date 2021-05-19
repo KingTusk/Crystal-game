@@ -79,6 +79,7 @@ void AMina::BeginPlay()
 }
 
 
+
 // Called every frame
 void AMina::Tick(float DeltaTime)
 {
@@ -193,6 +194,14 @@ void AMina::Refill()
 {
 	CrystalAmmo++;
 }
+
+void AMina::Heal()
+{
+	
+}
+
+
+
 
 void AMina::Shoot()
 {

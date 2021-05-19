@@ -25,7 +25,7 @@ protected:
 		float DefaultHealth = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-		float MaxHealth = 200.0f;
+		float MaxHealth = 100.0f;
 
 	UPROPERTY(BlueprintReadOnly)
 		float Health = DefaultHealth;

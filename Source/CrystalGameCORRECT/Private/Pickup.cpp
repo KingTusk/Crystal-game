@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "CrystalGameCORRECT/Mina.h"
+#include "Health.h"
 
 // Sets default values
 APickup::APickup()
@@ -60,9 +61,10 @@ void APickup::OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor
 		Destroy();
 	}
 	
-	if (Health == true)
+	if (Health == true && OtherActor->IsA(AMina::StaticClass()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Health Picked up"))
+		/*Cast<AMina>(OtherActor)->Heal();*/
 		Destroy();
 	}
 	

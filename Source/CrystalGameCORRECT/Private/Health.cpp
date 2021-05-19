@@ -4,6 +4,7 @@
 #include "Health.h"
 #include "CrescentGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "CrystalGameCORRECT/Mina.h"
 #include "Pickup.h"
 
 
@@ -20,6 +21,8 @@ UHealth::UHealth()
 }
 
 
+
+
 // Called when the game starts
 void UHealth::BeginPlay()
 {
@@ -29,6 +32,8 @@ void UHealth::BeginPlay()
 	GameModeRef = Cast<ACrescentGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealth::TakeDamage);
 }
+
+
 
 void UHealth::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
@@ -42,14 +47,10 @@ void UHealth::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* 
 
 	if (Health <= 0)
 	{
-		if (GameModeRef)
-		{
-			GameModeRef->ActorDied(GetOwner());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Health component has no reference to GameMode"));
-		}
+			if (DamagedActor->IsA(AMina::StaticClass()))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Mina died"))
+		    }
 
 	}
 
