@@ -56,10 +56,6 @@ public:
 	UFUNCTION()
 		void Refill();
 
-	UFUNCTION()
-		void Heal();
-
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -92,8 +88,10 @@ public:
 	UFUNCTION()
 		void StopMelee();
 
-	//We dont have a attack animation for the game yet, once that is implemented we can remove this boolean
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attack")
 	bool isAttacking{ false };
+
 	FVector temp{ 1.f };
 
 	UPROPERTY()
@@ -121,4 +119,5 @@ public:
 		void StopDashing();
 	UFUNCTION()
 		void ResetDash();
+	//End of dash functions
 };

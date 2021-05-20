@@ -198,13 +198,6 @@ void AMina::Refill()
 	}
 }
 
-void AMina::Heal()
-{
-	
-}
-
-
-
 
 void AMina::Shoot()
 {
