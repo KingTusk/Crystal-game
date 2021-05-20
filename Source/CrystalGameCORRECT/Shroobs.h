@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		USkeletalMeshComponent* ShroobVisibleMesh;
 
+	UPROPERTY(EditAnywhere)
+		int HitCount = 0;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

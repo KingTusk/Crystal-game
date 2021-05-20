@@ -41,11 +41,11 @@ void AShroobs::Tick(float DeltaTime)
 
 void AShroobs::ImHit()
 {
-	/*if (Health <= 0)
-	{*/
-		//Destroys the Shroob
+	HitCount++;
+	if (HitCount == 2)
+	{
 		Destroy();
-	/*}*/
-	
+		HitCount = 0;
+	}	
 }
 

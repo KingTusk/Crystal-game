@@ -61,13 +61,7 @@ void APickup::OnPlayerEnterPickupBox(UPrimitiveComponent* OverlappedComp, AActor
 		Destroy();
 	}
 	
-	if (Health == true && OtherActor->IsA(AMina::StaticClass()))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Health Picked up"))
-		/*Cast<AMina>(OtherActor)->Heal();*/
-		Destroy();
-	}
-	
+
 }
 
 

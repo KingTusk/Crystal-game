@@ -23,7 +23,7 @@ AMina::AMina()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// set our turn rates for input
-	BaseTurnRate = 45.f;
+	BaseTurnRate = 60.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -192,7 +192,10 @@ void AMina::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherA
 //This function is called whenever the player picks up a ammo refill
 void AMina::Refill()
 {
-	CrystalAmmo++;
+	if (CrystalAmmo < 5)
+	{
+		CrystalAmmo++;
+	}
 }
 
 void AMina::Heal()

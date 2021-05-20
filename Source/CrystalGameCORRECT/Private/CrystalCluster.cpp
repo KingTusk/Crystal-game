@@ -41,7 +41,9 @@ void ACrystalCluster::IsStruck()
 void ACrystalCluster::SpawnObject()
 {
 	FActorSpawnParameters SpawnParams;
-	AActor* SpawnedActorRef = GetWorld()->SpawnActor<APickup>(ActorToSpawn, SpawnParams);
+	FVector Loc = GetActorLocation();
+	FRotator Rot = GetActorRotation();
+	AActor* SpawnedActorRef = GetWorld()->SpawnActor<APickup>(ActorToSpawn, Loc, Rot, SpawnParams);
 }
 
 // Called every frame
