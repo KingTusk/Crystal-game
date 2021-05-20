@@ -50,8 +50,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable)
+		void OnAttackBeginOverlap();
+
+	UFUNCTION(BlueprintCallable)
+		void OnAttackEndOverlap();
 
 	UFUNCTION()
 		void Refill();
@@ -83,23 +89,22 @@ public:
 		bool Jumping;
 
 	//Mellee attacks and projectile attacks below
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void Melee();
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void StopMelee();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+	bool isAttacking = false;
+	//Attacks done
 
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attack")
-	bool isAttacking{ false };
-
-	FVector temp{ 1.f };
-
+	//Shooting code
 	UPROPERTY()
 		float Damage;
 	UFUNCTION()
 		void Shoot();
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile")
 		int32 CrystalAmmo { 0 };
+	//Shooting code done
 
 	//Dash Functions and porperty
 	//Length of desh, speed of dash, dash stop timer etc.

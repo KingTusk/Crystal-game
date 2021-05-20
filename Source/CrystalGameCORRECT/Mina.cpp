@@ -89,13 +89,7 @@ void AMina::Tick(float DeltaTime)
 	{
 		Jump();
 	}
-	//Only temporary as we have no attack animation
-	if (isAttacking)
-	{
-		//Move the hitbox to trigger the overlap event
-		AttackBox->SetRelativeLocation(AttackPlacement + temp);
-		temp *= -1.f;
-	}
+
 	
 }
 
@@ -118,7 +112,6 @@ void AMina::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Melee", IE_Pressed, this, &AMina::Melee);
 	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &AMina::Shoot);
 	PlayerInputComponent->BindAction("Melee", IE_Released, this, &AMina::StopMelee);
-	//PlayerInputComponent->BindAction("Shoot", IE_Released, this, &AMina::Shoot);
 
 }
 
@@ -159,17 +152,26 @@ void AMina::Dash()
 
 void AMina::Melee()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack"));
-	AttackBox->SetGenerateOverlapEvents(true);
-	isAttacking = true;	//only needed until we get animation
-
+	UE_LOG(LogTemp, Warning, TEXT("Attack begin"))
+	isAttacking = true;
 }
 
 void AMina::StopMelee()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Stop Attack"));
+	UE_LOG(LogTemp, Warning, TEXT("Attack end"))
+	isAttacking = false;
+}
+
+void AMina::OnAttackBeginOverlap()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attack true"))
+	AttackBox->SetGenerateOverlapEvents(true);
+}
+
+void AMina::OnAttackEndOverlap()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attack false"))
 	AttackBox->SetGenerateOverlapEvents(false);
-	isAttacking = false;	//only needed until we get animation
 }
 
 
@@ -216,6 +218,8 @@ void AMina::Shoot()
 
 }
 
+
+
 void AMina::StopDashing()
 {
 	GetCharacterMovement()->StopMovementImmediately();
@@ -234,6 +238,8 @@ void AMina::TurnAtRate(float Rate)
 	// Calculate delta for the first frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
+
+
 
 void AMina::Forward(float Value)
 {
