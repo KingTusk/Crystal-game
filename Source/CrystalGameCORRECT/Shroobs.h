@@ -3,9 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include <Shape.h>
-
 #include "GameFramework/Actor.h"
 #include "Shroobs.generated.h"
 

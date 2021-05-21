@@ -90,6 +90,7 @@ void AMina::Tick(float DeltaTime)
 		Jump();
 	}
 
+	MinaCurrentLocation = GetActorLocation();
 	
 }
 

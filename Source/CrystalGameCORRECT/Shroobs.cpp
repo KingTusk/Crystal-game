@@ -99,11 +99,7 @@ void AShroobs::RandRotation()
 		amountOfRotation++;
 }
 
-/*void AShroobs::SpawnVolume()
-{
-	FActorSpawnParameters SpawnParam;
-	AActor* SpawnActorRef = GetWorld()->SpawnActor(ActorToSpawn,spawnPoint,spawnRotation,SpawnParam);
-}*/
+
 
 
 void AShroobs::onOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
